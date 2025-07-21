@@ -21,7 +21,6 @@ func Routes(app fiber.Router) {
 	service := services.AccountServicesInit(repo)
 	handler := handlers.AccountHandlersInit(service)
 
-
 	//Init Task API
 	taskRepo := repository.TaskRepoInit(database.DB)
 	taskService := services.TaskServicesInit(taskRepo)
@@ -35,10 +34,9 @@ func Routes(app fiber.Router) {
 	app.Post("/create", handler.CreateAccount)
 	app.Post("/login", handler.AccountLogin)
 
-	taskGroup := app.Group("/task",middleware.RoleBasedMiddleware("admin","user"))
-	taskGroup.Post("/create",taskHandler.CreateTask)
+	taskGroup := app.Group("/task", middleware.RoleBasedMiddleware("admin", "user"))
+	taskGroup.Post("/create", taskHandler.CreateTask)
 	taskGroup.Get("/get", taskHandler.GetTask)
-	taskGroup.Get("/profile",  handler.GetProfile)
+	taskGroup.Get("/profile", handler.GetProfile)
 
- 
 }
