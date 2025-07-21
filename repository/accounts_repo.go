@@ -11,6 +11,7 @@ type AccountRepository interface {
 	CreateAccountRepo(user models.Account) error
 	CheckUsernameAlreadyExist(username string) bool
 	LoginAccount(username string) (models.Account, error)
+	GetProfile(id int)(models.Account, error)
 }
 
 // DB Injection
@@ -55,4 +56,18 @@ func (r *AccountDbRepo) LoginAccount(username string) (models.Account, error) {
 		return models.Account{}, err
 	}
 	return user, nil
+}
+
+
+func (r *AccountDbRepo) GetProfile(id int)(models.Account, error){
+	var profile models.Account
+
+	err := r.db.Where("id = ?", id).Select("id","firstname","lastname","username","role").Find(&profile).Error
+
+	if err != nil {
+		return models.Account{}, err
+	}
+
+	return profile, nil
+
 }

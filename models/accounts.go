@@ -18,12 +18,6 @@ type Account struct {
 	DeletedAt gorm.DeletedAt `gorm:"index"` // optional soft delete
 }
 
-type Task struct {
-	ID        uint   `gorm:"primaryKey;autoIncrement"`
-	AccountId uint   `gorm:"not null"`
-	Task      string `gorm:"not null"`
-}
-
 type LoginCred struct {
 	Username string
 	Password string

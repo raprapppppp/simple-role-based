@@ -28,7 +28,6 @@ func (hh *AccountHandlers) CreateAccount(h *fiber.Ctx) error {
 			"error": "Invalid request body",
 		})
 	}
-
 	err := hh.service.CreateAccountService(userAccount)
 	if err != nil {
 		return err
@@ -71,7 +70,7 @@ func (hh *AccountHandlers) AccountLogin(h *fiber.Ctx) error {
 	claims := jwt.MapClaims{
 		"id":    userAccount.ID,
 		"name":  userAccount.Username,
-		"admin": userAccount.Role,
+		"role": userAccount.Role,
 		"exp":   time.Now().Add(time.Minute * 60).Unix(),
 	}
 
@@ -97,5 +96,26 @@ func (hh *AccountHandlers) AccountLogin(h *fiber.Ctx) error {
 	return h.Status(fiber.StatusOK).JSON(fiber.Map{
 		"alert": "succesfull login",
 	})
+}
 
+//Get Profile
+func (hh *AccountHandlers) GetProfile (h *fiber.Ctx) error {
+
+	//Get the id from claims that store in locals
+	id := h.Locals("id")
+	if id == nil {
+		return h.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Unauthorized"})
+	}
+	//convert to float and to int before passing
+	idFloat, ok := id.(float64)
+	if !ok {
+		return h.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Invalid user ID type"})
+	}
+
+	profile,err := hh.service.GetProfileService(int(idFloat))
+
+	if err != nil {
+		return h.Status(500).JSON(fiber.Map{"error": err.Error()})
+	}
+	return h.Status(fiber.StatusOK).JSON(profile)
 }

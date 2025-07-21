@@ -11,6 +11,7 @@ import (
 type AccountServices interface {
 	CreateAccountService(user models.Account) error
 	AccountLoginService(user models.LoginCred) (models.Account, string)
+	GetProfileService(id int)(models.Account, error)
 }
 
 // Repository Injection
@@ -47,4 +48,8 @@ func (s *AccountRepoInjection) AccountLoginService(user models.LoginCred) (model
 		return models.Account{}, "Password does not match"
 	}
 	return userAccount, "Account match"
+}
+
+func (s *AccountRepoInjection) GetProfileService(id int)(models.Account, error) {
+	return s.repo.GetProfile(id)
 }
