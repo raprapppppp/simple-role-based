@@ -20,25 +20,24 @@ func Routes(app fiber.Router) {
 	service := services.AccountServicesInit(repo)
 	handler := handlers.AccountHandlersInit(service)
 
-
 	//Init Task API
 	taskRepo := repository.TaskRepoInit(database.DB)
 	taskService := services.TaskServicesInit(taskRepo)
 	taskHandler := handlers.TaskHandlerInit(taskService)
 
 	app.Use(cors.New(cors.Config{
-		AllowOrigins:     "http://localhost:3001", // Your Next.js frontend
+		AllowOrigins:     "http://localhost:3000", // Your Next.js frontend
 		AllowCredentials: true,
 	}))
 
 	app.Post("/create", handler.CreateAccount)
 	app.Post("/login", handler.AccountLogin)
 
-	taskGroup := app.Group("/task",middleware.RoleBasedMiddleware("admin","user"))
-	taskGroup.Post("/create",taskHandler.CreateTask)
+	taskGroup := app.Group("/task", middleware.RoleBasedMiddleware("admin", "user"))
+	taskGroup.Post("/create", taskHandler.CreateTask)
 	taskGroup.Get("/get", taskHandler.GetTask)
-	taskGroup.Get("/profile",  handler.GetProfile)
-	taskGroup.Delete("/delete",  taskHandler.DeleteTask)
-	taskGroup.Put("/update",  taskHandler.UpdateTask)
- 
+	taskGroup.Get("/profile", handler.GetProfile)
+	taskGroup.Delete("/delete", taskHandler.DeleteTask)
+	taskGroup.Put("/update", taskHandler.UpdateTask)
+
 }
