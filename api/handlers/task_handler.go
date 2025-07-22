@@ -36,14 +36,14 @@ func (h *TaskHandlerInjection) CreateTask(t *fiber.Ctx) error{
 
 	task.AccountId = uint(idFloat)
 
-	err = h.service.CreateTask(task)
+	tasks, err := h.service.CreateTask(task)
 	if err !=nil {
 		return t.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 		"error": err.Error(),
 	})
 	}
 
-	return t.SendStatus(fiber.StatusOK)
+	return t.Status(fiber.StatusOK).JSON(tasks)
 }
 
 //Get Task base on who is the user
@@ -65,4 +65,40 @@ func(h *TaskHandlerInjection) GetTask(t *fiber.Ctx) error {
 	}
 
 	return t.Status(fiber.StatusOK).JSON(tasks)
+}
+
+
+//Delete
+func (h *TaskHandlerInjection) DeleteTask(t *fiber.Ctx) error {
+	var task models.Task
+
+	err := t.BodyParser(&task)
+	if err != nil{
+		return t.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Failed to parse request"}) 
+	}
+
+	mess,err := h.service.DeleteTask(task)
+
+	if err != nil {
+		return err
+	}
+
+	return t.Status(fiber.StatusOK).JSON(fiber.Map{"error": mess}) 
+}
+
+//Update
+func (h *TaskHandlerInjection) UpdateTask(t *fiber.Ctx) error {
+	var task models.Task
+
+	err := t.BodyParser(&task)
+	if err != nil {
+		return t.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Failed to parse request"}) 
+	}
+
+	upTask, err := h.service.UpdateTask(task)
+	if err != nil {
+		return err
+	}
+	return t.Status(fiber.StatusOK).JSON(upTask)
+
 }

@@ -25,7 +25,7 @@ func (hh *AccountHandlers) CreateAccount(h *fiber.Ctx) error {
 
 	if err := h.BodyParser(&userAccount); err != nil {
 		return h.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Invalid request body",
+			"error": "404 Invalid request body",
 		})
 	}
 	mess, err := hh.service.CreateAccountService(userAccount)
